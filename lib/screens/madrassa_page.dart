@@ -18,23 +18,63 @@ class _MadrassaPageState extends State<MadrassaPage> {
   List<Madrassa> filteredMadrassas = []; // Filtered list of Madrassas
   Location? selectedLocation;
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController(); // Controller for search input
+  final TextEditingController _searchController =
+      TextEditingController(); // Controller for search input
 
   @override
   void initState() {
     super.initState();
     fetchMadrassas();
     fetchLocations();
-    _searchController.addListener(_filterMadrassas); // Listen for changes in search input
+    _searchController
+        .addListener(_filterMadrassas); // Listen for changes in search input
+  }
+
+  void _showCreatedSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: const Color.fromARGB(255, 43, 90, 44),
+      margin: EdgeInsets.only(top: 40, left: 16, right: 16),
+    ));
+  }
+  
+  void _showUpdatedSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: const Color.fromARGB(255, 164, 192, 53),
+      margin: EdgeInsets.only(top: 40, left: 16, right: 16),
+    ));
+  }
+   
+  void _showDeletedSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.amberAccent[700],
+      margin: EdgeInsets.only(top: 40, left: 16, right: 16),
+    ));
+  }
+  
+  void _showFailedSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: const Color.fromARGB(255, 232, 27, 13),
+      margin: EdgeInsets.only(top: 40, left: 16, right: 16),
+    ));
   }
 
   // Fetch all Madrassas (Read)
   Future<void> fetchMadrassas() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/api/madrassa'));
+    final response =
+        await http.get(Uri.parse('http://localhost:8000/api/madrassa'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
-        madrassas = jsonResponse.map((data) => Madrassa.fromJson(data)).toList();
+        madrassas =
+            jsonResponse.map((data) => Madrassa.fromJson(data)).toList();
         filteredMadrassas = madrassas; // Initialize filtered list
       });
     } else {
@@ -44,11 +84,13 @@ class _MadrassaPageState extends State<MadrassaPage> {
 
   // Fetch all Locations (for the dropdown)
   Future<void> fetchLocations() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/api/location'));
+    final response =
+        await http.get(Uri.parse('http://localhost:8000/api/location'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
-        locations = jsonResponse.map((data) => Location.fromJson(data)).toList();
+        locations =
+            jsonResponse.map((data) => Location.fromJson(data)).toList();
         if (locations.isNotEmpty) selectedLocation = locations[0];
       });
     } else {
@@ -61,8 +103,10 @@ class _MadrassaPageState extends State<MadrassaPage> {
     String query = _searchController.text.toLowerCase();
     setState(() {
       filteredMadrassas = madrassas.where((madrassa) {
-        return madrassa.name.toLowerCase().contains(query) || 
-               madrassa.locationName.toLowerCase().contains(query); // Add location name filtering if applicable
+        return madrassa.name.toLowerCase().contains(query) ||
+            madrassa.locationName
+                .toLowerCase()
+                .contains(query); // Add location name filtering if applicable
       }).toList();
     });
   }
@@ -76,6 +120,9 @@ class _MadrassaPageState extends State<MadrassaPage> {
     );
     if (response.statusCode == 200) {
       fetchMadrassas();
+      _showCreatedSnackbar('Madrassa created successfully');
+    } else {
+      _showFailedSnackbar('Failed to create madrassa');
     }
   }
 
@@ -88,15 +135,22 @@ class _MadrassaPageState extends State<MadrassaPage> {
     );
     if (response.statusCode == 200) {
       fetchMadrassas();
+      _showUpdatedSnackbar("Madrassa Update Successful");
+    } else {
+      _showFailedSnackbar("Failed to Update Madrassa");
     }
   }
 
   // Delete a Madrassa (Delete)
   Future<void> deleteMadrassa(int id) async {
-    final response = await http.delete(Uri.parse('http://localhost:8000/api/madrassa/$id'));
+    final response =
+        await http.delete(Uri.parse('http://localhost:8000/api/madrassa/$id'));
     if (response.statusCode == 200) {
       fetchMadrassas();
-    }
+      _showDeletedSnackbar("Madrassa Deleted Successfully!");
+    } else {
+      _showFailedSnackbar("Failed to Delete Madrassa");
+    }    
   }
 
   // Show dialog for creating a new Madrassa
@@ -155,7 +209,9 @@ class _MadrassaPageState extends State<MadrassaPage> {
   // Show dialog for updating an existing Madrassa
   void showUpdateDialog(Madrassa madrassa) {
     _nameController.text = madrassa.name;
-    selectedLocation = locations.firstWhere((location) => location.id == madrassa.locationId, orElse: () => locations[0]);
+    selectedLocation = locations.firstWhere(
+        (location) => location.id == madrassa.locationId,
+        orElse: () => locations[0]);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -194,7 +250,8 @@ class _MadrassaPageState extends State<MadrassaPage> {
           TextButton(
             onPressed: () {
               if (selectedLocation != null) {
-                updateMadrassa(madrassa.id, _nameController.text, selectedLocation!.id);
+                updateMadrassa(
+                    madrassa.id, _nameController.text, selectedLocation!.id);
               }
               Navigator.of(context).pop();
             },

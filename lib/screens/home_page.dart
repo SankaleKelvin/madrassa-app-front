@@ -58,11 +58,20 @@ class HomePage extends StatelessWidget {
                 children: [
                   _buildNavButton(
                     context,
-                    'Courses & Programs',
+                    'Locations',
                     Icons.book,
                     Colors.blueAccent,
                     () {
-                      // Navigate to Courses Page
+                      Navigator.pushNamed(context, '/locations');
+                    },
+                  ),
+                   _buildNavButton(
+                    context,
+                    'Courses',
+                    Icons.book,
+                    Colors.blueAccent,
+                    () {
+                      Navigator.pushNamed(context, '/courses');
                     },
                   ),
                   _buildNavButton(
@@ -71,7 +80,7 @@ class HomePage extends StatelessWidget {
                     Icons.home,
                     Colors.orangeAccent,
                     () {
-                      // Navigate to Instructors Page
+                      Navigator.pushNamed(context, '/madrassa');
                     },
                   ),
                   _buildNavButton(

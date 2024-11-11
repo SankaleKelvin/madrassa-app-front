@@ -1,10 +1,9 @@
-import 'dart:ffi';
 
 class Course {
   int id;
   String courseName;
   String description;
-  Double charges;
+  double charges;
   int madrassaId;
   String madrassaName;
 
@@ -20,10 +19,10 @@ class Course {
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
         id: json['id'],
-        courseName: json['courseName'],
+        courseName: json['course_name'],
         description: json['description'],
-        charges: json['charges'],
-        madrassaId: json['madrassaId'],
-        madrassaName: json['madrassaName']);
+        charges: json['charges'].toDouble(),
+        madrassaId: json['madrassa_id'],
+        madrassaName: json['madrassa_name']);
   }
 }
