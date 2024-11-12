@@ -76,15 +76,13 @@ class _LocationPageState extends State<LocationPage> {
     }
   }
 
-  // Filter Madrassas based on the search query
+  // Filter Locations based on the search query
   void _filterLocations() {
     String query = _searchController.text.toLowerCase();
     setState(() {
       filteredLocations = locations.where((location) {
         return location.name.toLowerCase().contains(query) ||
-            location.areaCode
-                .toLowerCase()
-                .contains(query); 
+            location.areaCode.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -94,7 +92,7 @@ class _LocationPageState extends State<LocationPage> {
     final response = await http.post(
       Uri.parse('http://localhost:8000/api/location'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"name": name, "area_code": areaCode}),
+      body: jsonEncode({"name": name, "areaCode": areaCode}),
     );
     if (response.statusCode == 200) {
       fetchLocations();
@@ -109,7 +107,7 @@ class _LocationPageState extends State<LocationPage> {
     final response = await http.put(
       Uri.parse('http://localhost:8000/api/location/$id'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"name": name, "area_code": areaCode}),
+      body: jsonEncode({"name": name, "areaCode": areaCode}),
     );
     if (response.statusCode == 200) {
       fetchLocations();
@@ -134,6 +132,7 @@ class _LocationPageState extends State<LocationPage> {
   // Show dialog for creating a new Location
   void showCreateDialog() {
     _nameController.clear();
+    _areaCodeController.clear();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -149,7 +148,6 @@ class _LocationPageState extends State<LocationPage> {
               controller: _areaCodeController,
               decoration: InputDecoration(labelText: 'Area Code'),
             ),
-            SizedBox(height: 16),
           ],
         ),
         actions: [
@@ -168,6 +166,7 @@ class _LocationPageState extends State<LocationPage> {
   // Show dialog for updating an existing Location
   void showUpdateDialog(Location location) {
     _nameController.text = location.name;
+    _areaCodeController.text = location.areaCode;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -225,6 +224,7 @@ class _LocationPageState extends State<LocationPage> {
                   margin: EdgeInsets.all(8.0),
                   child: ListTile(
                     title: Text(location.name),
+                    subtitle: Text('Code: ${location.areaCode}'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

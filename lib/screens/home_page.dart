@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
-                    'passport.jpg',
+                    'image4.jpg',
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -59,10 +59,19 @@ class HomePage extends StatelessWidget {
                   _buildNavButton(
                     context,
                     'Locations',
-                    Icons.book,
+                    Icons.pin_drop,
                     Colors.blueAccent,
                     () {
                       Navigator.pushNamed(context, '/locations');
+                    },
+                  ),
+                  _buildNavButton(
+                    context,
+                    'Madrassas',
+                    Icons.home,
+                    Colors.orangeAccent,
+                    () {
+                      Navigator.pushNamed(context, '/madrassa');
                     },
                   ),
                    _buildNavButton(
@@ -76,25 +85,34 @@ class HomePage extends StatelessWidget {
                   ),
                   _buildNavButton(
                     context,
-                    'Madrassas',
-                    Icons.home,
-                    Colors.orangeAccent,
-                    () {
-                      Navigator.pushNamed(context, '/madrassa');
-                    },
-                  ),
-                  _buildNavButton(
-                    context,
                     'Students',
                     Icons.people,
                     Colors.orangeAccent,
                     () {
-                      // Navigate to Instructors Page
+                      Navigator.pushNamed(context, '/students');
                     },
                   ),
                   _buildNavButton(
                     context,
                     'Enrollment',
+                    Icons.campaign,
+                    Colors.redAccent,
+                    () {
+                      // Navigate to Announcements Page
+                    },
+                  ),                  
+                  _buildNavButton(
+                    context,
+                    'Billing',
+                    Icons.campaign,
+                    Colors.redAccent,
+                    () {
+                      // Navigate to Announcements Page
+                    },
+                  ),                  
+                  _buildNavButton(
+                    context,
+                    'Payment',
                     Icons.campaign,
                     Colors.redAccent,
                     () {
