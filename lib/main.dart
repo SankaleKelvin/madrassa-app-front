@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:madrassa_app/screens/home_page.dart';
+import 'package:madrassa_app/screens/welcome_page.dart';
 import 'routes/route.dart';
 
 void main() {

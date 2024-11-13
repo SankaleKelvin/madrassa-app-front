@@ -302,34 +302,51 @@ class _StudentPageState extends State<StudentPage> {
                 controller: _studentNameController,
                 decoration: InputDecoration(labelText: 'Student Name'),
               ),
-              ElevatedButton(
+              SizedBox(height: 10),
+              // Display selected image
+              if (_studentPhotoXFile != null) ...[
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: kIsWeb
+                        ? _webImageBytes != null
+                            ? Image.memory(
+                                _webImageBytes!,
+                                fit: BoxFit.cover,
+                              )
+                            : SizedBox()
+                        : Image.file(
+                            io.File(_studentPhotoXFile!.path),
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+              ElevatedButton.icon(
                 onPressed: _pickStudentImage,
-                child: Text(_studentPhotoXFile == null
+                icon: Icon(Icons.photo_camera),
+                label: Text(_studentPhotoXFile == null
                     ? 'Select Photo'
                     : 'Change Photo'),
               ),
-              if (_studentPhotoXFile != null) ...[
-                SizedBox(height: 10),
-                if (kIsWeb && _webImageBytes != null)
-                  Image.memory(
-                    _webImageBytes!,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  )
-                else if (!kIsWeb)
-                  Image.file(
-                    io.File(_studentPhotoXFile!.path),
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
-              ],
-              SizedBox(height: 10),
+              SizedBox(height: 16),
               DropdownSearch<Madrassa>(
                 items: madrassas,
                 itemAsString: (Madrassa madrassa) => madrassa.name,
                 selectedItem: selectedMadrassa,
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: "Select Madrassa",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
                 onChanged: (Madrassa? newMadrassa) {
                   setState(() {
                     selectedMadrassa = newMadrassa;
@@ -341,6 +358,12 @@ class _StudentPageState extends State<StudentPage> {
                 items: locations,
                 itemAsString: (Location location) => location.name,
                 selectedItem: selectedLocation,
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: "Select Location",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
                 onChanged: (Location? newLocation) {
                   setState(() {
                     selectedLocation = newLocation;

@@ -4,171 +4,92 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Madrassa Home'),
-        backgroundColor: Colors.green[700],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome and Description
-              Text(
-                'Welcome to the Madrassa!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[900],
-                ),
+      body: Stack(
+        children: [
+          // Hero Section Background Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('logo.jpg'), // Replace with your image path
+                fit: BoxFit.contain,
               ),
-              SizedBox(height: 8),
-              Text(
-                'Providing quality Islamic and general education for students of all ages.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-              ),
-              SizedBox(height: 16),
-
-              // Image of Madrassa
-              Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'image4.jpg',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              SizedBox(height: 24),
-
-              // Navigation Buttons
-              Text(
-                'Explore',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[800],
-                ),
-              ),
-              SizedBox(height: 8),
-              Column(
-                children: [
-                  _buildNavButton(
-                    context,
-                    'Locations',
-                    Icons.pin_drop,
-                    Colors.blueAccent,
-                    () {
-                      Navigator.pushNamed(context, '/locations');
-                    },
-                  ),
-                  _buildNavButton(
-                    context,
-                    'Madrassas',
-                    Icons.home,
-                    Colors.orangeAccent,
-                    () {
-                      Navigator.pushNamed(context, '/madrassa');
-                    },
-                  ),
-                   _buildNavButton(
-                    context,
-                    'Courses',
-                    Icons.book,
-                    Colors.blueAccent,
-                    () {
-                      Navigator.pushNamed(context, '/courses');
-                    },
-                  ),
-                  _buildNavButton(
-                    context,
-                    'Students',
-                    Icons.people,
-                    Colors.orangeAccent,
-                    () {
-                      Navigator.pushNamed(context, '/students');
-                    },
-                  ),
-                  _buildNavButton(
-                    context,
-                    'Enrollment',
-                    Icons.campaign,
-                    Colors.redAccent,
-                    () {
-                      // Navigate to Announcements Page
-                    },
-                  ),                  
-                  _buildNavButton(
-                    context,
-                    'Billing',
-                    Icons.campaign,
-                    Colors.redAccent,
-                    () {
-                      // Navigate to Announcements Page
-                    },
-                  ),                  
-                  _buildNavButton(
-                    context,
-                    'Payment',
-                    Icons.campaign,
-                    Colors.redAccent,
-                    () {
-                      // Navigate to Announcements Page
-                    },
-                  ),
-                  _buildNavButton(
-                    context,
-                    'Contact Us',
-                    Icons.contact_mail,
-                    Colors.greenAccent,
-                    () {
-                      // Navigate to Contact Page
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 24),
-
-              // About Madrassa Section
-              Text(
-                'About Our Madrassa',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[800],
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Our Madrassa is dedicated to nurturing young minds through a blend of traditional Islamic teachings and modern education. Our mission is to foster a deep understanding of the Quran, Sunnah, and other Islamic sciences, while preparing students for success in a variety of fields.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-              ),
-            ],
+            ),
+            height: 300,//MediaQuery.of(context).size.height,
+            width: 400,//MediaQuery.of(context).size.width,
           ),
-        ),
-      ),
-    );
-  }
-
-  // Helper method to build navigation buttons
-  Widget _buildNavButton(
-      BuildContext context, String label, IconData icon, Color color, VoidCallback onPressed) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          minimumSize: Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          // Dark overlay for better contrast
+          Container(
+            color: const Color.fromARGB(255, 37, 110, 40).withOpacity(0.5),
           ),
-        ),
-        icon: Icon(icon, color: Colors.white),
-        label: Text(label, style: TextStyle(color: Colors.white, fontSize: 18)),
-        onPressed: onPressed,
+          // Content overlaid on top of the hero image
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title and Subtitle
+                Text(
+                  'MADRASA APP',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Amplify Your Faith',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 30),
+                // Buttons
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.white),
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  ),
+                  onPressed: () {
+                    // TODO: Navigate to Sign In
+                    Navigator.pushNamed(context, '/about-us');
+                  },
+                  child: Text(
+                    "GET STARTED",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+                SizedBox(height: 20), // Space between buttons
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.white),
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "SIGN IN",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.key_outlined,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
