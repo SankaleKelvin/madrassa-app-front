@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -11,6 +13,52 @@ class _RegisterPageState extends State<RegisterPage> {
   String _email = '';
   String _password = '';
   String _confirmPassword = '';
+  bool _isLoading = false;
+
+  void _submitForm() async {
+    if (_formKey.currentState?.validate() ?? false) {
+       setState(() => _isLoading = true);
+      try {
+        // Call the registration API
+        final result = await AuthService.register(
+          name: _name,
+          email: _email,
+          password: _password,
+          passwordConfirmation: _confirmPassword,
+        );
+
+        if (result['success']) {
+          // Registration successful
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Registration successful!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pushReplacementNamed(context, '/welcome');
+        } else {
+          // Registration failed
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              // content: Text('Registration failed. Please try again.'),
+              content: Text(result['message']),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        // Error occurred during API call
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred. Please try again later.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           // Call your register API here
+                          _submitForm();
                           print('Register with $_name, $_email, $_password');
                         }
                       },

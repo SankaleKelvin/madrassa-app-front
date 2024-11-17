@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:html' as html;
+import '../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -24,35 +25,48 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = true;
       });
 
+      // try {
+      //   final response = await http.post(
+      //     Uri.parse('http://localhost:8000/api/login'),
+      //     body: {
+      //       'email': _email,
+      //       'password': _password,
+      //     },
+      //   );
+
       try {
-        final response = await http.post(
-          Uri.parse('http://localhost:8000/api/login'),
-          body: {
-            'email': _email,
-            'password': _password,
-          },
+        final result = await AuthService.login(
+          email: _email,
+          password: _password,
         );
 
-        if (response.statusCode == 200) {
-          // Parse the response and save the token and user information
-          final data = jsonDecode(response.body);
-          final token = data['token'];
-          final user = data['user'];
+        // if (response.statusCode == 200) {
+        //   // Parse the response and save the token and user information
+        //   final data = jsonDecode(response.body);
+        //   final token = data['token'];
+        //   final user = data['user'];
 
-          // Save the token and user information to the appropriate storage
-          if (kIsWeb) {
-            html.window.localStorage['token'] = token;
-            html.window.localStorage['user'] = jsonEncode(user);
-          } else {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString('token', token);
-            await prefs.setString('user', jsonEncode(user));
-          }
-          Navigator.pushNamed(context, '/welcome');
+        //   // Save the token and user information to the appropriate storage
+        //   if (kIsWeb) {
+        //     html.window.localStorage['token'] = token;
+        //     html.window.localStorage['user'] = jsonEncode(user);
+        //   } else {
+        //     final prefs = await SharedPreferences.getInstance();
+        //     await prefs.setString('token', token);
+        //     await prefs.setString('user', jsonEncode(user));
+        //   }
+        //   Navigator.pushNamed(context, '/welcome');
+        // } else {
+        //   final errorMessage = jsonDecode(response.body)['message'] ?? 'Invalid email or password';
+        //   _showErrorDialog(errorMessage);
+        // }
+
+        if (result['success']) {
+          Navigator.pushReplacementNamed(context, '/welcome');
         } else {
-          final errorMessage = jsonDecode(response.body)['message'] ?? 'Invalid email or password';
-          _showErrorDialog(errorMessage);
+          _showErrorDialog(result['message']);
         }
+        
       } catch (e) {
         // Handle network or other errors
         _showErrorDialog('An error occurred. Please try again later.');
