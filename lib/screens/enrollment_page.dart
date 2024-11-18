@@ -29,7 +29,6 @@ class _EnrollmentPageState extends State<EnrollmentPage> {
     fetchEnrollments();
     fetchStudentsAndCourses();
     _searchController.addListener(_filterEnrollments);
-    _checkUserRoleAndInitialize();
   }
 
   Future<Map<String, String>> _getHeaders() async {
@@ -39,29 +38,6 @@ class _EnrollmentPageState extends State<EnrollmentPage> {
       "Authorization": "Bearer $token",
     };
   }
-
-  Future<void> _checkUserRoleAndInitialize() async {
-  // Retrieve user data from local storage or shared preferences
-  String? userString = await AuthService.getUserData(); 
-  if (userString != null) {
-    Map<String, dynamic> userData = json.decode(userString);
-    
-    if (userData['role'] == 'student') {
-      // If student, fetch only their own record
-      await fetchStudentsAndCourses(studentId: userData['id']);
-      
-      // Filter enrollments to show only student's own enrollments
-      await fetchEnrollments(studentId: userData['id']);
-    } else {
-      // If admin, fetch all records as before
-      await fetchStudentsAndCourses();
-      await fetchEnrollments();
-    }
-  }
-  
-  _searchController.addListener(_filterEnrollments);
-}
-
 
   void _showSnackbar(String message, Color backgroundColor) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
