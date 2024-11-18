@@ -38,17 +38,4 @@ class Student {
         ? studentPhoto!
         : baseUrl + studentPhoto!;
   }
-
-  // String getPhotoUrl() {
-  //   const baseUrl = "http://localhost:8000/storage/";
-  //   if (studentPhoto == null || studentPhoto!.isEmpty) return '';
-  //   if (studentPhoto!.startsWith('http')) return studentPhoto!;
-
-  //   // Clean up the path
-  //   final cleanPath = studentPhoto!
-  //       .replaceAll('posts/', '')
-  //       .replaceAll('//', '/');
-
-  //   return baseUrl + cleanPath;
-  // }
 }

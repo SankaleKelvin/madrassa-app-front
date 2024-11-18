@@ -22,6 +22,7 @@ class _LocationPageState extends State<LocationPage> {
   void initState() {
     super.initState();
     fetchLocations();
+    _checkPermissions();
     _searchController.addListener(_filterLocations);
   }
 

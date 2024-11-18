@@ -1,9 +1,7 @@
-import 'dart:ffi';
-
 class Enrollment {
   int id;
   DateTime enrollmentDate;
-  Double amountCharged;
+  double amountCharged;
   int studentId;
   int courseId;
   String studentName;
@@ -22,11 +20,11 @@ class Enrollment {
   factory Enrollment.fromJson(Map<String, dynamic> json) {
     return Enrollment(
         id: json['id'],
-        enrollmentDate: json['enrollmentDate'],
-        amountCharged: json['amountCharged'],
-        studentId: json['studentId'],
-        courseId: json['courseId'],
-        studentName: json['studentName'],
-        courseName: json['courseName']);
+        enrollmentDate: DateTime.parse(json['enrollment_date']),
+        amountCharged: double.parse(json['amount_charged'].toString()),
+        studentId: json['student_id'],
+        courseId: json['course_id'],
+        studentName: json['student_name'],
+        courseName: json['course_name']);
   }
 }

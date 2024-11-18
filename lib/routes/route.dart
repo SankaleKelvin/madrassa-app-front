@@ -38,6 +38,7 @@ import '../screens/home_page.dart';
 import '../screens/madrassa_page.dart';
 import '../screens/courses_page.dart';
 import '../screens/menu_items.dart';
+import '../screens/enrollment_page.dart';
 import './route_guard.dart';
 final Map<String, WidgetBuilder> appRoutes = {
   '/': (context) => HomePage(),
@@ -64,5 +65,9 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/students': (context) => RouteGuard(
         child: StudentPage(),
         allowedRoles: ['Admin', 'Teacher'],
+      ),
+  '/enrollment': (context) => RouteGuard(
+        child: EnrollmentPage(),
+        allowedRoles: ['Admin', 'Teacher', 'Student'],
       ),
 };
