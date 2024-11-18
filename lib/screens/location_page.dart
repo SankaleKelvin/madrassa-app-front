@@ -16,12 +16,20 @@ class _LocationPageState extends State<LocationPage> {
   final TextEditingController _areaCodeController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
+  bool _hasEditPermission = false;
 
   @override
   void initState() {
     super.initState();
     fetchLocations();
     _searchController.addListener(_filterLocations);
+  }
+
+  Future<void> _checkPermissions() async {
+    final hasPermission = await AuthService.hasAnyRole(['Admin', 'Teacher']);
+    setState(() {
+      _hasEditPermission = hasPermission;
+    });
   }
 
   // Helper method to get headers with auth token
@@ -55,7 +63,8 @@ class _LocationPageState extends State<LocationPage> {
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body);
         setState(() {
-          locations = jsonResponse.map((data) => Location.fromJson(data)).toList();
+          locations =
+              jsonResponse.map((data) => Location.fromJson(data)).toList();
           filteredLocations = locations;
         });
       } else if (response.statusCode == 401) {
@@ -83,6 +92,12 @@ class _LocationPageState extends State<LocationPage> {
 
   // Create a new Location (Create)
   Future<void> createLocation(String name, String areaCode) async {
+    if (!_hasEditPermission) {
+      _showSnackbar(
+          'You do not have permission to create locations', Colors.red);
+      return;
+    }
+
     try {
       final headers = await _getHeaders();
       final response = await http.post(
@@ -93,7 +108,8 @@ class _LocationPageState extends State<LocationPage> {
 
       if (response.statusCode == 200) {
         fetchLocations();
-        _showSnackbar('Location created successfully', const Color.fromARGB(255, 43, 90, 44));
+        _showSnackbar('Location created successfully',
+            const Color.fromARGB(255, 43, 90, 44));
       } else if (response.statusCode == 401) {
         _showSnackbar('Session expired. Please login again.', Colors.red);
       } else {
@@ -106,6 +122,12 @@ class _LocationPageState extends State<LocationPage> {
 
   // Update an existing Location (Update)
   Future<void> updateLocation(int id, String name, String areaCode) async {
+    if (!_hasEditPermission) {
+      _showSnackbar(
+          'You do not have permission to update locations', Colors.red);
+      return;
+    }
+
     try {
       final headers = await _getHeaders();
       final response = await http.put(
@@ -116,7 +138,8 @@ class _LocationPageState extends State<LocationPage> {
 
       if (response.statusCode == 200) {
         fetchLocations();
-        _showSnackbar('Location updated successfully', const Color.fromARGB(255, 164, 192, 53));
+        _showSnackbar('Location updated successfully',
+            const Color.fromARGB(255, 164, 192, 53));
       } else if (response.statusCode == 401) {
         _showSnackbar('Session expired. Please login again.', Colors.red);
       } else {
@@ -129,6 +152,12 @@ class _LocationPageState extends State<LocationPage> {
 
   // Delete a Location (Delete)
   Future<void> deleteLocation(int id) async {
+    if (!_hasEditPermission) {
+      _showSnackbar(
+          'You do not have permission to delete locations', Colors.red);
+      return;
+    }
+
     try {
       final headers = await _getHeaders();
       final response = await http.delete(
@@ -138,7 +167,8 @@ class _LocationPageState extends State<LocationPage> {
 
       if (response.statusCode == 200) {
         fetchLocations();
-        _showSnackbar('Location deleted successfully', Colors.amberAccent[700]!);
+        _showSnackbar(
+            'Location deleted successfully', Colors.amberAccent[700]!);
       } else if (response.statusCode == 401) {
         _showSnackbar('Session expired. Please login again.', Colors.red);
       } else {
@@ -150,6 +180,12 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   void showCreateDialog() {
+    if (!_hasEditPermission) {
+      _showSnackbar(
+          'You do not have permission to create locations', Colors.red);
+      return;
+    }
+
     _nameController.clear();
     _areaCodeController.clear();
     showDialog(
@@ -187,6 +223,12 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   void showUpdateDialog(Location location) {
+    if (!_hasEditPermission) {
+      _showSnackbar(
+          'You do not have permission to update locations', Colors.red);
+      return;
+    }
+
     _nameController.text = location.name;
     _areaCodeController.text = location.areaCode;
     showDialog(
@@ -213,7 +255,8 @@ class _LocationPageState extends State<LocationPage> {
           ),
           TextButton(
             onPressed: () {
-              updateLocation(location.id, _nameController.text, _areaCodeController.text);
+              updateLocation(
+                  location.id, _nameController.text, _areaCodeController.text);
               Navigator.of(context).pop();
             },
             child: Text('Update'),

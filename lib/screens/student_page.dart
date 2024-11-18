@@ -197,77 +197,145 @@ class _StudentPageState extends State<StudentPage> {
   }
 
   // Update an existing Student (Update)
-  Future<void> updateStudent(
-      int id,
-      String firstName,
-      String lastName,
-      String studentName,
-      XFile? studentPhoto,
-      int locationId,
-      int madrassaId) async {
-    try {
-      var uri = Uri.parse('http://localhost:8000/api/student/$id');
-      var request = http.MultipartRequest('POST', uri);
+  // Update an existing Student (Update)
+Future<void> updateStudent(
+    int id,
+    String firstName,
+    String lastName,
+    String studentName,
+    XFile? studentPhoto,
+    int locationId,
+    int madrassaId) async {
+  try {
+    var uri = Uri.parse('http://localhost:8000/api/student/$id');
+    var request = http.MultipartRequest('POST', uri);
+    
+    // Add auth headers
+    final token = await AuthService.getToken();
+    request.headers.addAll({
+      "Authorization": "Bearer $token",
+      // Note: Don't set Content-Type header for multipart requests
+      // as it's automatically set with the boundary
+    });
 
-      // Add auth headers
-      final token = await AuthService.getToken();
-      request.headers.addAll({
-        "Authorization": "Bearer $token",
-        // Note: Don't set Content-Type header for multipart requests
-        // as it's automatically set with the boundary
-      });
+    // Add text fields
+    request.fields['first_name'] = firstName;
+    request.fields['last_name'] = lastName;
+    request.fields['student_name'] = studentName;
+    request.fields['location_id'] = locationId.toString();
+    request.fields['madrassa_id'] = madrassaId.toString();
+    request.fields['_method'] = 'PUT'; // Laravel requires this for PUT requests
 
-      // Add text fields
-      request.fields['first_name'] = firstName;
-      request.fields['last_name'] = lastName;
-      request.fields['student_name'] = studentName;
-      request.fields['location_id'] = locationId.toString();
-      request.fields['madrassa_id'] = madrassaId.toString();
-      request.fields['_method'] =
-          'PUT'; // Laravel requires this for PUT requests
-
-      // Handle file upload based on platform
-      if (studentPhoto != null) {
-        if (kIsWeb) {
-          // For web platform
-          final bytes = await studentPhoto.readAsBytes();
-          request.files.add(
-            http.MultipartFile.fromBytes(
-              'student_photo',
-              bytes,
-              filename: path.basename(studentPhoto.path),
-            ),
-          );
-        } else {
-          // For mobile platform
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'student_photo',
-              studentPhoto.path,
-              filename: path.basename(studentPhoto.path),
-            ),
-          );
-        }
-      }
-
-      var response = await request.send();
-      var responseData = await response.stream.bytesToString();
-
-      if (response.statusCode == 200) {
-        fetchStudents();
-        _showSnackbar('Student updated successfully', Colors.green);
+    // Handle file upload based on platform
+    if (studentPhoto != null) {
+      if (kIsWeb) {
+        // For web platform
+        final bytes = await studentPhoto.readAsBytes();
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'student_photo',
+            bytes,
+            filename: path.basename(studentPhoto.path),
+          ),
+        );
       } else {
-        _showSnackbar('Failed to update student: ${responseData}', Colors.red);
+        // For mobile platform
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'student_photo',
+            studentPhoto.path,
+            filename: path.basename(studentPhoto.path),
+          ),
+        );
       }
-    } catch (e) {
-      _showSnackbar('Error updating student: $e', Colors.red);
     }
+
+    var response = await request.send();
+    var responseData = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      fetchStudents();
+      _showSnackbar('Student updated successfully', 
+          const Color.fromARGB(255, 164, 192, 53));
+    } else if (response.statusCode == 401) {
+      _showSnackbar('Session expired. Please login again.', Colors.red);
+    } else {
+      _showSnackbar('Failed to update student: ${responseData}', Colors.red);
+    }
+  } catch (e) {
+    _showSnackbar('Network error occurred', Colors.red);
   }
+}
+
+//   Future<void> updateStudent(
+//     int id,
+//     String firstName,
+//     String lastName,
+//     String studentName,
+//     XFile? studentPhoto,
+//     int locationId,
+//     int madrassaId) async {
+//   try {
+//     var uri = Uri.parse('http://localhost:8000/api/student/$id');
+//     var request = http.MultipartRequest('PUT', uri);
+    
+//     final token = await AuthService.getToken();
+//     request.headers.addAll({
+//         "Authorization": "Bearer $token",
+//         // Note: Don't set Content-Type header for multipart requests
+//         // as it's automatically set with the boundary
+//       });
+
+//     // request.headers.addAll(headers);
+
+//     // Required text fields
+//     request.fields['first_name'] = firstName;
+//     request.fields['last_name'] = lastName;
+//     request.fields['student_name'] = studentName;
+//     request.fields['location_id'] = locationId.toString();
+//     request.fields['madrassa_id'] = madrassaId.toString();
+
+//     // Photo handling
+//     if (studentPhoto != null) {
+//       if (kIsWeb) {
+//         final bytes = await studentPhoto.readAsBytes();
+//         request.files.add(
+//           http.MultipartFile.fromBytes(
+//             'student_photo',
+//             bytes,
+//             filename: path.basename(studentPhoto.path),
+//           ),
+//         );
+//       } else {
+//         request.files.add(
+//           await http.MultipartFile.fromPath(
+//             'student_photo',
+//             studentPhoto.path,
+//             filename: path.basename(studentPhoto.path),
+//           ),
+//         );
+//       }
+//     }
+
+//     var response = await request.send();
+//     var responseData = await response.stream.bytesToString();
+
+//     if (response.statusCode == 200) {
+//       fetchStudents();
+//       _showSnackbar('Student updated successfully', Colors.amberAccent);
+//     } else {
+//       _showSnackbar('Failed to update student: $responseData', Colors.red);
+//     }
+//   } catch (e) {
+//     _showSnackbar('Error updating student: $e', Colors.red);
+//   }
+// }
 
   // Delete a Student (Delete)
   Future<void> deleteStudent(int id) async {
+    final headers = await _getHeaders();
     final response =
-        await http.delete(Uri.parse('http://localhost:8000/api/student/$id'));
+        await http.delete(Uri.parse('http://localhost:8000/api/student/$id'), headers: headers);
     if (response.statusCode == 200) {
       fetchStudents();
       _showSnackbar("Student Deleted Successfully!", Colors.amberAccent);
@@ -369,35 +437,43 @@ class _StudentPageState extends State<StudentPage> {
                 items: madrassas,
                 itemAsString: (Madrassa madrassa) => madrassa.name,
                 selectedItem: selectedMadrassa,
-                dropdownDecoratorProps: DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    labelText: "Select Madrassa",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
                 onChanged: (Madrassa? newMadrassa) {
                   setState(() {
                     selectedMadrassa = newMadrassa;
                   });
                 },
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: "Madrasa",
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              popupProps: PopupProps.menu(
+                showSearchBox: true,
+              ),
               ),
               SizedBox(height: 10),
-              DropdownSearch<Location>(
-                items: locations,
-                itemAsString: (Location location) => location.name,
-                selectedItem: selectedLocation,
-                dropdownDecoratorProps: DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    labelText: "Select Location",
-                    border: OutlineInputBorder(),
-                  ),
+               DropdownSearch<Location>(
+              items: locations,
+              itemAsString: (Location location) => location.name,
+              selectedItem: selectedLocation,
+              onChanged: (Location? newLocation) {
+                setState(() {
+                  selectedLocation = newLocation;
+                });
+              },
+              dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: "Location",
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  border: OutlineInputBorder(),
                 ),
-                onChanged: (Location? newLocation) {
-                  setState(() {
-                    selectedLocation = newLocation;
-                  });
-                },
               ),
+              popupProps: PopupProps.menu(
+                showSearchBox: true,
+              ),
+            ),
             ],
           ),
         ),
@@ -531,6 +607,16 @@ class _StudentPageState extends State<StudentPage> {
                     selectedMadrassa = newMadrassa;
                   });
                 },
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: "Madrasa",
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              popupProps: PopupProps.menu(
+                showSearchBox: true,
+              ),
               ),
               SizedBox(height: 10),
               DropdownSearch<Location>(
@@ -542,6 +628,16 @@ class _StudentPageState extends State<StudentPage> {
                     selectedLocation = newLocation;
                   });
                 },
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: "Location",
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              popupProps: PopupProps.menu(
+                showSearchBox: true,
+              ),            
               ),
             ],
           ),

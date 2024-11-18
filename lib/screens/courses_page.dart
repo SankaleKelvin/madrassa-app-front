@@ -391,7 +391,7 @@ class _CoursePageState extends State<CoursePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Madrassa: ${course.madrassaName}'),
-                              Text('Charges: \$${course.charges.toStringAsFixed(2)}'),
+                              Text('Charges: \KShs.${course.charges.toStringAsFixed(2)}'),
                               Text('Description: ${course.description}'),
                             ],
                           ),
