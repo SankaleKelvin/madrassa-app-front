@@ -47,7 +47,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/welcome': (context) => RouteGuard(child: WelcomePage()),
   '/menu': (context) => RouteGuard(
         child: MenuItems(),
-        allowedRoles: ['Admin', 'Teacher'],
+        allowedRoles: ['Admin', 'Teacher', 'Student'],
       ),
   '/madrassa': (context) => RouteGuard(
         child: MadrassaPage(),
@@ -59,7 +59,7 @@ final Map<String, WidgetBuilder> appRoutes = {
       ),
   '/locations': (context) => RouteGuard(
         child: LocationPage(),
-        allowedRoles: ['Admin', 'Teacher', 'Student'],
+        allowedRoles: ['Admin', 'Teacher'],
       ),
   '/students': (context) => RouteGuard(
         child: StudentPage(),

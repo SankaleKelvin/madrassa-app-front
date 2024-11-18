@@ -80,7 +80,7 @@ class _MenuItemsState extends State<MenuItems> {
                     SizedBox(height: 8),
                     Column(
                       children: [
-                        if (_hasAccess(['admin', 'teacher', 'student']))
+                        if (_hasAccess(['admin', 'teacher']))
                           _buildNavButton(
                             context,
                             'Locations',
@@ -98,7 +98,7 @@ class _MenuItemsState extends State<MenuItems> {
                             () => Navigator.pushNamed(context, '/madrassa'),
                           ),
 
-                        if (_hasAccess(['admin', 'teacher', 'student']))
+                        if (_hasAccess(['admin', 'teacher']))
                           _buildNavButton(
                             context,
                             'Courses',
@@ -116,12 +116,12 @@ class _MenuItemsState extends State<MenuItems> {
                             () => Navigator.pushNamed(context, '/students'),
                           ),
 
-                        if (_hasAccess(['admin']))
+                        if (_hasAccess(['admin', 'teacher', 'student']))
                           _buildNavButton(
                             context,
                             'Enrollment',
                             Icons.campaign,
-                            Colors.redAccent,
+                            Colors.cyan,
                             () => Navigator.pushNamed(context, '/enrollment'),
                           ),
 

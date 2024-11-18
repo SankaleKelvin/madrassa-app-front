@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/location.dart';
 import '../models/madrassa.dart';
 import '../models/student.dart';
+import '../services/auth_service.dart';
 import 'package:path/path.dart' as path;
 import 'dart:convert';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -50,6 +51,15 @@ class _StudentPageState extends State<StudentPage> {
     _searchController.addListener(_filterStudents);
   }
 
+  // Helper method to get headers with auth token
+  Future<Map<String, String>> _getHeaders() async {
+    final token = await AuthService.getToken();
+    return {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    };
+  }
+
   void _showSnackbar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
@@ -61,8 +71,9 @@ class _StudentPageState extends State<StudentPage> {
 
   // Fetch all Students (Read)
   Future<void> fetchStudents() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8000/api/student'));
+    final headers = await _getHeaders();
+    final response = await http
+        .get(Uri.parse('http://localhost:8000/api/student'), headers: headers);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       List studentJson = jsonResponse['Students'];
@@ -77,8 +88,9 @@ class _StudentPageState extends State<StudentPage> {
 
   // Fetch all Locations (for the dropdown)
   Future<void> fetchLocations() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8000/api/location'));
+    final headers = await _getHeaders();
+    final response = await http
+        .get(Uri.parse('http://localhost:8000/api/location'), headers: headers);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
@@ -93,8 +105,9 @@ class _StudentPageState extends State<StudentPage> {
 
   // Fetch all Locations (for the dropdown)
   Future<void> fetchMadrassas() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8000/api/madrassa'));
+    final headers = await _getHeaders();
+    final response = await http
+        .get(Uri.parse('http://localhost:8000/api/madrassa'), headers: headers);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
@@ -130,6 +143,13 @@ class _StudentPageState extends State<StudentPage> {
     try {
       var uri = Uri.parse('http://localhost:8000/api/student');
       var request = http.MultipartRequest('POST', uri);
+
+      final token = await AuthService.getToken();
+      request.headers.addAll({
+        "Authorization": "Bearer $token",
+        // Note: Don't set Content-Type header for multipart requests
+        // as it's automatically set with the boundary
+      });
 
       // Add text fields
       request.fields['first_name'] = firstName;
@@ -188,6 +208,14 @@ class _StudentPageState extends State<StudentPage> {
     try {
       var uri = Uri.parse('http://localhost:8000/api/student/$id');
       var request = http.MultipartRequest('POST', uri);
+
+      // Add auth headers
+      final token = await AuthService.getToken();
+      request.headers.addAll({
+        "Authorization": "Bearer $token",
+        // Note: Don't set Content-Type header for multipart requests
+        // as it's automatically set with the boundary
+      });
 
       // Add text fields
       request.fields['first_name'] = firstName;
