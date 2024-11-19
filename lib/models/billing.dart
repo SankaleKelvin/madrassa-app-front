@@ -1,11 +1,10 @@
-import 'dart:ffi';
 
 class Billing {
   int id;
   DateTime billingDate;
   int studentCourseId;
   int invoiceNumber;
-  Double amountCharged;
+  double amountCharged;
   String studentName;
   String courseName;
 

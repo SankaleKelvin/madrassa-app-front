@@ -23,7 +23,7 @@
 //   '/courses': (context) => RouteGuard(child: CoursePage()),
 //   '/locations': (context) => RouteGuard(child: LocationPage()),
 //   '/students' : (context) => RouteGuard(child: StudentPage())
-  
+
 // };
 
 // routes.dart
@@ -39,7 +39,10 @@ import '../screens/madrassa_page.dart';
 import '../screens/courses_page.dart';
 import '../screens/menu_items.dart';
 import '../screens/enrollment_page.dart';
+import '../screens/billing_page.dart';
+import '../screens/payment_page.dart';
 import './route_guard.dart';
+
 final Map<String, WidgetBuilder> appRoutes = {
   '/': (context) => HomePage(),
   '/about-us': (context) => AboutUsPage(),
@@ -69,5 +72,13 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/enrollment': (context) => RouteGuard(
         child: EnrollmentPage(),
         allowedRoles: ['Admin', 'Teacher', 'Student'],
+      ),
+  '/billings': (context) => RouteGuard(
+        child: UnpaidBillsPage(),
+        allowedRoles: ['Admin', 'Accountant'],
+      ),
+  '/payments': (context) => RouteGuard(
+        child: PaymentPage(),
+        allowedRoles: ['Admin', 'Accountant'],
       ),
 };

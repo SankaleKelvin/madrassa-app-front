@@ -131,7 +131,7 @@ class _MenuItemsState extends State<MenuItems> {
                             'Billing',
                             Icons.receipt,
                             Colors.redAccent,
-                            () => Navigator.pushNamed(context, '/billing'),
+                            () => Navigator.pushNamed(context, '/billings'),
                           ),
 
                         if (_hasAccess(['admin', 'accountant', 'student']))
@@ -140,7 +140,7 @@ class _MenuItemsState extends State<MenuItems> {
                             'Payment',
                             Icons.payment,
                             Colors.redAccent,
-                            () => Navigator.pushNamed(context, '/payment'),
+                            () => Navigator.pushNamed(context, '/payments'),
                           ),
 
                         // Contact Us is available to all authenticated users
